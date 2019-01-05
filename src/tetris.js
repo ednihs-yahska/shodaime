@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import tetrisShaderV from './vertex_shader';
 import tetrisShaderF from './fragment_shader';
 import {mat4} from 'gl-matrix';
+import Game from "./game";
 
 export default class Tetris extends Component {
     componentDidMount(){
@@ -27,18 +28,32 @@ export default class Tetris extends Component {
 
         const buffers = this.initBuffers(gl);
 
-        this.drawScene(gl, programInfo, buffers);
+        let then = 0;
+
+        function render(now){
+            now *= 0.001;
+            const deltaTime = now - then;
+            then = now;
+            this.drawScene(gl, programInfo, buffers, deltaTime);
+            requestAnimationFrame(render);
+        }
+        requestAnimationFrame(render);
+
+        
     }
 
-    initBuffers = (gl) => {
+    initBuffers(gl){
         const positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+        let gameField = [... new Array(200)].map(()=>1);
+
+
         const positions = [
-            1.0, 1.0,
-            -1.0, 1.0,
-            1.0, -1.0,
-            -1.0, -1.0
+            10.0, 10.0, 0,
+            -10.0, 10.0, 0,
+            10.0, -10.0, 0,
+            -10.0, -10.0, 0
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
@@ -48,7 +63,7 @@ export default class Tetris extends Component {
         }
     }
 
-    initShaderProgram = (gl, vsSource, fsSource) => {
+    initShaderProgram(gl, vsSource, fsSource){
         const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, vsSource);
         const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
@@ -58,14 +73,13 @@ export default class Tetris extends Component {
         gl.linkProgram(shaderProgram);
 
         if(!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)){
-            debugger;
             console.log('An error occured compiling the shaders: '+gl.getShaderInfoLog(shaderProgram));
             return null;
         }
         return shaderProgram;
     }
 
-    loadShader = (gl, type, source)=>{
+    loadShader(gl, type, source){
         const shader = gl.createShader(type);
         gl.shaderSource(shader, source);
         gl.compileShader(shader);
@@ -78,7 +92,7 @@ export default class Tetris extends Component {
         return shader;
     }
 
-    drawScene = (gl, programInfo, buffer)=>{
+    drawScene(gl, programInfo, buffer, deltaTime){
         gl.clearColor(0.0, 0.0, 0.0, 1.0);
         gl.clearDepth(1.0);
         gl.enable(gl.DEPTH_TEST);
@@ -102,16 +116,17 @@ export default class Tetris extends Component {
 
         const modelViewMatrix = mat4.create();
 
-        mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -6.0]);
+        mat4.translate(modelViewMatrix, modelViewMatrix, [-0.0, 0.0, -50.0]);
+        mat4.rotate(modelViewMatrix, modelViewMatrix, (-45*Math.PI)/180, [1.0, 0.0, 0.0])
 
         {
-            const numComponents = 2;
+            const numComponents = 3;
             const type = gl.FLOAT;
             const normalize = false;
             const stride = 0;
             const offset = 0;
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, buffer.positions);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buffer.position);
 
             gl.vertexAttribPointer(
                 programInfo.attribLocations.vertexPosition,
@@ -136,18 +151,18 @@ export default class Tetris extends Component {
                 false,
                 modelViewMatrix
             );
+        }
 
-            {
-                const offset = 0;
-                const vertexCount = 4;
-                gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
-            }
+        {
+            const offset = 0;
+            const vertexCount = 4;
+            gl.drawArrays(gl.TRIANGLE_STRIP, offset, vertexCount);
         }
     }
 
     render() {
         return(
-            <canvas id="glCanvas" width="640" height="480"></canvas>
+            <canvas id="glCanvas" width={Math.min(window.innerWidth*0.6, 400)} height={Math.min(window.innerHeight*0.8, 650)}></canvas>
         );
     }
 }

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import vsSource from './vertex_shader';
 import fsSource from './fragment_shader';
 import {mat4} from 'gl-matrix';
+import logo from './logo.svg';
 
 export default class Window extends Component {
     componentDidMount(){
@@ -49,6 +50,36 @@ export default class Window extends Component {
         return {
             position: positionBuffer,
         }
+    }
+
+    initShaderProgram(gl, vsSource, fsSource){
+        const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+
+        const shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
+
+        if(!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)){
+            alert('Unable to initialize the shader program: '+gl.getProgramInfoLog(shaderProgram));
+            return null;
+        }
+
+        return shaderProgram;
+    }
+
+    loadShader(gl, type, source){
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+
+        if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+            alert('An error occured compiling the shaders: '+gl.getShaderInfoLog(shader));
+            gl.deleteShader(shader);
+            return null;
+        }
+        return shader;
     }
 
     drawScene(gl, programInfo, buffer){
@@ -115,39 +146,12 @@ export default class Window extends Component {
 
     }
 
-    initShaderProgram(gl, vsSource, fsSource){
-        const vertexShader = this.loadShader(gl, gl.VERTEX_SHADER, vsSource);
-        const fragmentShader = this.loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
-
-        const shaderProgram = gl.createProgram();
-        gl.attachShader(shaderProgram, vertexShader);
-        gl.attachShader(shaderProgram, fragmentShader);
-        gl.linkProgram(shaderProgram);
-
-        if(!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)){
-            alert('Unable to initialize the shader program: '+gl.getProgramInfoLog(shaderProgram));
-            return null;
-        }
-
-        return shaderProgram;
-    }
-
-    loadShader(gl, type, source){
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-
-        if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-            alert('An error occured compiling the shaders: '+gl.getShaderInfoLog(shader));
-            gl.deleteShader(shader);
-            return null;
-        }
-        return shader;
-    }
-
     render(){
         return(
-            <canvas id="glCanvas" width="640" height="480"></canvas>
+            <React.Fragment>
+                <img src={logo} className="App-logo" alt="logo" />
+                <canvas id="glCanvas" width="640" height="480"></canvas>
+            </React.Fragment>
         );
     }
 }
