@@ -1,9 +1,10 @@
 export default `
-    attribute vec4 aVertexPosition;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-
+    varying vec2 vfPosition;
     void main() {
-        gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+        
+        vec4 modelViewPosition = modelViewMatrix*vec4(position, 1.0);
+        vec4 p = projectionMatrix * modelViewPosition;
+        gl_Position = p;
+        vfPosition = p.xy;
     }
 `
