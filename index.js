@@ -1,5 +1,12 @@
-var express = require('express');
-var app = express();
-var port = 3000;
-app.get('/', function (req, res) { return res.send('Hello World!'); });
-app.listen(port, function () { return console.log("Example app listening on port " + port + "!"); });
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const app = express_1.default();
+const port = 3000;
+app.use(express_1.default.static('dist'));
+app.get('/', (req, res) => res.sendFile('index.html', { root: '.' }));
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+//# sourceMappingURL=index.js.map
