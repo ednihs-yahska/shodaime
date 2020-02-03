@@ -1,7 +1,7 @@
 const path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-    entry: './src/base.ts',
+    entry: './src/base.tsx',
     output:  {
         path: path.join(__dirname, '/dist'),
         filename: 'bundle.js',
@@ -13,8 +13,13 @@ module.exports = {
     devtool: "source-map",
 
     resolve: {
+        modules: [
+            "node_modules",
+            path.resolve(__dirname, "src"),
+            path.resolve(__dirname, "three")
+          ],
         // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx"]
+        extensions: [".ts", ".tsx", ".js", ".jsx"]
     },
 
     module: {
@@ -36,13 +41,12 @@ module.exports = {
             }
         ]
     },
-    plugins: [new HtmlWebpackPlugin()],
+    plugins: [new HtmlWebpackPlugin({template:"index.html"})],
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
     // This is important because it allows us to avoid bundling all of our
     // dependencies, which allows browsers to cache those libraries between builds.
     externals: {
-        "react": "React",
-        "react-dom": "ReactDOM"
+
     }
 };
