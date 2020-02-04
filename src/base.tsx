@@ -1,40 +1,36 @@
 import React,  {Component, FunctionComponent, useRef, useState, useEffect, useMemo, Suspense}  from 'react'
-import styled from 'styled-components'
+import styled, {css} from 'styled-components'
 import ReactDom from 'react-dom'
 import {Canvas, useFrame, useLoader, useUpdate} from 'react-three-fiber'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
-//import {OrbitControls} from "three/examples/js/controls/OrbitControls.js"
 import * as THREE from 'three'
+import {device} from './device'
+import Projects from './projects'
 
-//apply({OrbitControls})
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
+import {StyledLink} from './commons'
 
-type MeshType = {
-    current?: any
-}
-function Box(props: any) {
-    // This reference will give us direct access to the mesh
-    const mesh:MeshType = useRef()
-    
-    // Set up state for the hovered and active state
-    const [hovered, setHover] = useState(false)
-    const [active, setActive] = useState(false)
-    
-    // Rotate mesh every frame, this is outside of React without overhead
-    useFrame(() => (mesh.current.rotation.x = mesh.current.rotation.y += 0.01))
-    
-    return (
-      <mesh
-        {...props}
-        ref={mesh}
-        scale={active ? [1.5, 1.5, 1.5] : [1, 1, 1]}
-        onClick={e => setActive(!active)}
-        onPointerOver={e => setHover(true)}
-        onPointerOut={e => setHover(false)}>
-        <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-        <meshStandardMaterial attach="material" color={hovered ? 'hotpink' : 'orange'} />
-      </mesh>
-    )
-}
+
+
+const StyledMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+  font-family: sans-serif;
+  font-size: 42px;
+  position: absolute;
+  padding: 5px;
+
+  top: 50%;
+  right: 0;
+  padding-right: 10%;
+  transform: translateY(-50%);
+
+`
 
 
 function Text({ children, vAlign = 'center', hAlign = 'center', size = 1, color = '#000000', ...props }: any) {
@@ -63,45 +59,49 @@ function Text({ children, vAlign = 'center', hAlign = 'center', size = 1, color 
     )
   }
 
+function Title() {
+  const ref:any = useRef()
+  useFrame(({ clock }) => (ref.current.rotation.x = ref.current.rotation.y = ref.current.rotation.z = Math.sin(clock.getElapsedTime()) * 0.3))
+  return (
+    <group ref={ref}>
+      <Text hAlign="left" position={[0, 2, 0]} children="Akshay" />
+      <Text hAlign="left" position={[0, 0, 0]} children="Shinde" />
+    </group>
+  )
+}
+
+function Menu():JSX.Element {
+  return <StyledMenu>
+    <StyledLink to="/projects"><span>Projects</span></StyledLink>
+    <StyledLink to="/resume"><span>Resume</span></StyledLink>
+    <StyledLink to="/hobbies"><span>Hobbies</span></StyledLink>
+  </StyledMenu>
+}
 
 const Root: FunctionComponent<{}> = ()=> 
-        <Canvas 
-        onScroll={e=>console.log((e.target as HTMLCanvasElement).scrollTop)}
-        onClick={e=>console.log((e:EventTarget) => console.log("Clicked in Canvas"))}>
-            <Suspense fallback={null}>
-                <ambientLight />
-                <pointLight position={[20, 10, 10]} />
-                <Box position={[-1.2, 0, 0]} />
-                <Box position={[1.2, 0, 0]} />
-                <Text hAlign="left" position={[0, 0, 0]} children="Akshay" />
-            </Suspense>
-        </Canvas>
+  <Router>
+    <Switch>
+      <Route path="/projects"><Projects /></Route>
+      <Route path="/resume">Resume</Route>
+      <Route path="/hobbies">Hobbies</Route>
+      <Route path="/">
+        <div id="root-child">
+          <Canvas 
+          onScroll={e=>console.log((e.target as HTMLCanvasElement).scrollTop)}
+          onClick={e=>console.log((e:EventTarget) => console.log("Clicked in Canvas"))}>
+              <Suspense fallback={null}>
+                  <ambientLight />
+                  <pointLight position={[20, 10, 10]} />
+                  <Title />
+              </Suspense>
+          </Canvas>
+          <Menu />
+        </div>
+      </Route>
+    </Switch>
+  </Router>
 
 
 ReactDom.render(React.createElement(Root), document.getElementById("app"))
 
-// var scene = new THREE.Scene();
-// var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-
-// var renderer = new THREE.WebGLRenderer();
-// renderer.setSize( window.innerWidth, window.innerHeight );
-// document.body.appendChild( renderer.domElement );
-
-// var geometry = new THREE.BoxGeometry();
-// var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// var cube = new THREE.Mesh( geometry, material );
-// scene.add( cube );
-
-// camera.position.z = 5;
-
-// var animate = function () {
-//     requestAnimationFrame( animate );
-
-//     cube.rotation.x += 0.01;
-//     cube.rotation.y += 0.01;
-
-//     renderer.render( scene, camera );
-// };
-
-// animate();
 
