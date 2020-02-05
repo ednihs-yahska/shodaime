@@ -8,7 +8,6 @@ import {device} from './device'
 import Projects from './projects'
 import BaseSuspense from './base_suspense'
 import Particles from './particles'
-import Plane from './plane'
 import Badge from './badge'
 import {
   BrowserRouter as Router,
