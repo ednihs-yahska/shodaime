@@ -12,7 +12,8 @@ import {ProjectType} from "./commons"
 
 const StyledProjects = styled.ul`
     display: flex;
-
+    flex-direction: column;
+    padding: 5px;
     & li{
         list-style-type: none;
     }
@@ -36,9 +37,9 @@ const projects = [
     },
     {
         title: "HazAdapt EMCi*",
-        image: "/assets/images/emci_screenshot.png",
+        image: "images/emci_screenshot.png",
         description: "Emergency Management Communication interface at HazAdapt is a project that helps emergency managers on campus to react to hazards sooner than traditional methods that can help save lives",
-        link: "www.hazadapt.com"
+        link: "https://www.hazadapt.com"
     },
     {
         title: "Mick's crossing",
@@ -52,7 +53,7 @@ export default function Projects() {
     return <StyledProjects>
            {
             projects.map((project: ProjectType, key)=>{
-                <Project key={key} title={project.title} image={project.image} description={project.description} link={project.link}/>
+                return <Project key={key} title={project.title} image={project.image} description={project.description} link={project.link}/>
             })
            }
         </StyledProjects>

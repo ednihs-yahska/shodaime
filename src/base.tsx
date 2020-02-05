@@ -6,9 +6,9 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader"
 import * as THREE from 'three'
 import {device} from './device'
 import Projects from './projects'
-import BaseSuspense from './base_suspense'
-import Particles from './particles'
+import Resume from './resume'
 import Badge from './badge'
+import Hobbies from './hobbies'
 import {
   BrowserRouter as Router,
   Switch,
@@ -51,6 +51,15 @@ const StyledScreen = styled.div`
     display: none;
   }
 `
+
+const Footnote = styled.div`
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  font-family: 32px;
+  font-family: sans-serif;
+`
+
 function Screen(){
   let [visible, setVisible] = useState(true)
   useEffect(()=>{
@@ -99,21 +108,20 @@ function Title() {
 function Menu():JSX.Element {
   return <StyledMenu>
     <StyledLink to="/projects"><span>Projects</span></StyledLink>
-    <StyledLink to="/resume"><span>Resume</span></StyledLink>
-    <StyledLink to="/hobbies"><span>Hobbies</span></StyledLink>
+    <StyledLink to="" onClick={()=>{
+            window.open("/pdf/Resume_Akshay_Shinde_Web.pdf", "_blank")
+        }}> Resume </StyledLink>
+    <StyledLink to="/hobbies"><span>About Me</span></StyledLink>
   </StyledMenu>
 }
 
 const Root: FunctionComponent<{}> = () => {
-  const mouse = useRef([0, 0])
-  const onMouseMove = useCallback(({ clientX: x, clientY: y }) => (mouse.current = [x - window.innerWidth / 2, y - window.innerHeight / 2]), [])
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
   return <Router>
     <Switch>
       <Route path="/projects"><Projects /></Route>
-      <Route path="/resume">Resume</Route>
-      <Route path="/hobbies">Hobbies</Route>
-      <Route path="/">
+      <Route path="/resume"><Resume /></Route>
+      <Route path="/hobbies"><Hobbies /></Route>
+      <Route exact path="/">
         <div id="root-child">
           <Canvas 
           onScroll={e=>console.log((e.target as HTMLCanvasElement).scrollTop)}
@@ -127,9 +135,13 @@ const Root: FunctionComponent<{}> = () => {
               </Suspense>
           </Canvas>
           <Menu />
+          <Footnote>This website is under a little maintenance ☺️ I got a bit too excited about react three fiber.</Footnote>
         </div>
         <Screen />
         <Badge />
+      </Route>
+      <Route path="*">
+            Path Not Found
       </Route>
     </Switch>
   </Router>
