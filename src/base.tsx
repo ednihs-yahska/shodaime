@@ -119,7 +119,7 @@ const Root: FunctionComponent<{}> = () => {
           onScroll={e=>console.log((e.target as HTMLCanvasElement).scrollTop)}
           onClick={e=>console.log((e:EventTarget) => console.log("Clicked in Canvas"))}>
               <Suspense fallback={
-                <Plane />
+                null
               }>
                   <ambientLight />
                   <pointLight position={[20, 10, 10]} />
