@@ -12,3 +12,16 @@ export const StyledLink = styled(Link)`
   text-decoration: none;
   padding: 10px 0;
 `
+
+export const StyledAnchor = styled.a`
+  color: hotpink;
+  text-decoration: none;
+  padding: 10px 0;
+`
+
+export type ProjectType = {
+  title: string,
+  image: string,
+  description: string,
+  link: string
+}

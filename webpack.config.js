@@ -25,11 +25,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts(x?)$/,
+                test: /(\.d)?\.ts(x?)$/,
                 exclude: /node_modules/,
                 use: [
                     {
-                        loader: "ts-loader"
+                        loader: "ts-loader",
+                        options:{
+                            transpileOnly: true
+                        }
                     }
                 ]
             },

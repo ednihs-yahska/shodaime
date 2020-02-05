@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(require("express"));
 var app = express_1.default();
-var port = 3000;
+var port = 9000;
 app.use(express_1.default.static('dist'));
 app.use(express_1.default.static('assets'));
 //app.get('/', (req: Request, res: Response) => res.sendFile('index.html', {root:'.'}))
