@@ -8,6 +8,6 @@ app.use(express.static('assets'))
 
 //app.get('/', (req: Request, res: Response) => res.sendFile('index.html', {root:'.'}))
 
-app.get('*', (req: Request, res: Response) => res.sendFile('index.html', {root:'.'}))
+app.get('*', (req: Request, res: Response) => res.sendFile('dist/index.html', {root:'.'}))
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
